@@ -1,0 +1,7 @@
+langgraph
+langchain-community
+langchain-openai
+neo4j
+wolframalpha
+chainlit
+python-dotenv
