@@ -6,7 +6,7 @@ from pydantic.v1 import BaseModel as BaseModelV1, Field as FieldV1
 from wolframalpha import Client
 import os
 import re
-from openai import OpenAI
+#from openai import OpenAI
 import voyageai
 from neo4j import GraphDatabase
 from collections import defaultdict, deque
