@@ -7,6 +7,7 @@ from wolframalpha import Client
 import os
 import re
 from openai import OpenAI
+import voyageai
 from neo4j import GraphDatabase
 from collections import defaultdict, deque
 
@@ -15,10 +16,12 @@ neo4j_uri = os.environ["NEO4J_URI"]
 neo4j_user = os.environ["NEO4J_USER"]
 neo4j_password = os.environ["NEO4J_PASSWORD"]
 wolfram_alpha_appid = os.environ["WOLFRAM_ALPHA_APPID"]
-EMBEDDING_MODEL  = "text-embedding-3-small" # can be shortened
+#EMBEDDING_MODEL  = "text-embedding-3-small" # can be shortened
+EMBEDDING_MODEL = 'voyage-multilingual-2'
 
 driver = GraphDatabase.driver(neo4j_uri, auth=(neo4j_user, neo4j_password))
-openai_client = OpenAI ()
+#openai_client = OpenAI()
+vo = voyageai.Client()
 wa = Client(wolfram_alpha_appid)
 
 print("Driver and OpenAI client initialized...")
@@ -107,11 +110,12 @@ class Chunk:
         return chunk_str
 
 def get_embedding(client, text, model):
-    response = client.embeddings.create(
-                    input=text,
+    response = client.embed(
+                    texts=text,
                     model=model,
+                    input_type="query",
                 )
-    return response.data[0].embedding
+    return response.embeddings[0]
 
 def reciprocal_rank_fusion(queries, d, k, searchResults, rank_func):
     return sum([1.0 / (k + rank_func(searchResults[q], d)) if d in searchResults[q] else 0 for q in queries])
@@ -134,7 +138,7 @@ def apply_reciprocal_rank_fusion(dist_results, queries, searchResults):
     sorted_result_dict = dict(sorted(result_dict.items(), key=lambda item: item[1], reverse=True))
     return sorted_result_dict
 
-def RRFGraphQuery(query: str, k: int, driver: GraphDatabase.driver, client: OpenAI):
+def RRFGraphQuery(query: str, k: int, driver: GraphDatabase.driver, client: voyageai.Client):
     # Perform TextSearch
     indexName = "titles" # Index containing section and chapter titles
     textCypher= f"CALL db.index.fulltext.queryNodes('{indexName}', '{query}') YIELD node, score RETURN DISTINCT node.title AS title, node.id AS id, score"
@@ -145,7 +149,7 @@ def RRFGraphQuery(query: str, k: int, driver: GraphDatabase.driver, client: Open
     print("Text search results retrieved...")
 
     # Perform VectorSearch
-    vecIndex = 'content-embeddings'
+    vecIndex = 'content-embeddings-vo'
     resultCount = k
     queryEmbedding = get_embedding(client, query, EMBEDDING_MODEL)
     print("Embedding generated...")
@@ -439,17 +443,17 @@ Area 4: c_s = 6,3 [kN/m^2]
 async def DocumentRetriever(query: str, data_type: str):
     """Call to retrieve relevant documents from a specialized database."""
     contextString = ""
-    #results = RRFGraphQuery(query, 3, driver, openai_client)
+    results = RRFGraphQuery(query, 3, driver, vo)
     #print("DocumentRetriever: Results retrieved...")
-    #keys = [key for key in results.keys()]
-    #results = RetrieveSections(keys, driver)
-    #root_section = parse_query_response(results)
+    keys = [key for key in results.keys()]
+    results = RetrieveSections(keys, driver)
+    root_section = parse_query_response(results)
 
-    #context = root_section.__str__()
-    #context = reduce_linebreaks(context)
+    context = root_section.__str__()
+    context = reduce_linebreaks(context)
     
     # ToDo: Support type filters
-    context = "Document Placeholder"
+    #context = "Document Placeholder"
     return {'retrieved information': context}
     
 
@@ -482,7 +486,7 @@ async def SearchDataBase(query: str, data_type: str, category: str):
     """Call to retrieve relevant documents required for answering the user query from a database, containing information about civil engineering processes and terminology."""
     
 
-    #results = RRFGraphQuery(query, 3, driver, openai_client)
+    #results = RRFGraphQuery(query, 3, driver, vo)
     #print("DocumentRetriever: Results retrieved...")
     #keys = [key for key in results.keys()]
     #results = RetrieveSections(keys, driver)

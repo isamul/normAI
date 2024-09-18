@@ -5,3 +5,4 @@ neo4j
 wolframalpha
 chainlit
 python-dotenv
+voyageai
