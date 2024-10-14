@@ -9,7 +9,7 @@ normAI's user interface looks like this when started in a web-browser:
 
 ![Start UI](img/start_ui.png)
 
-You can ask normAI factual questions about a building standards and it will answer by giving precise references:
+You can ask normAI factual questions about a building standard and it will answer by giving precise references:
 
 ![Start UI](img/ui_CoT.png)
 
