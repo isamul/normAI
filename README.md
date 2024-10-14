@@ -13,9 +13,9 @@ You can ask normAI factual questions about a building standard and it will answe
 
 ![Start UI](img/ui_CoT.png)
 
-To increase transparency, the user can also take a look into the actions the application makes.
+To increase transparency, the user can also take a look into the actions the application makes by expanding the Chain-of-Thought (CoT) UI element.
 
-It is also possible to ask normAI more complex questions requiring multiple steps to solve. The application is also capable of conducting mathmatical calculations that go beyond simple arithmetic operations. Answers to more complex questions are made transparent by the Chain-of-Thought UI element as well.
+It is also possible to ask normAI more complex questions requiring multiple steps to solve. The application is also capable of conducting mathmatical calculations that go beyond simple arithmetic operations. Answers to more complex questions are made transparent by the CoT UI element as well.
 
 ![Start UI](img/ui_expert.png)
 
