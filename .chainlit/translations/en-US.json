@@ -120,7 +120,7 @@
                 },
                 "inputBox": {
                     "input": {
-                        "placeholder": "Type your message here..."
+                        "placeholder": "Nachricht an NormAI..."
                     },
                     "speechButton": {
                         "start": "Start recording",

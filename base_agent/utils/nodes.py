@@ -1,12 +1,39 @@
+"""
+This module defines various nodes and utility functions used in the agent's workflow. It includes functions to get language models, route tasks, call models, extract tasks, and provide help. The module also sets up a callback handler for logging and monitoring.
+
+Modules and Classes:
+- ChatOpenAI: Class to interact with OpenAI's chat models.
+- SearchDataBase: Tool for searching a database.
+- ToolNode: Class to define a tool node.
+- AIMessage, ToolMessage: Classes for handling messages.
+- CallbackHandler: Class for handling callbacks.
+
+Functions:
+- _get_model: Function to get a language model based on the model name.
+- agent_route: Function to determine the next step based on the agent's state.
+- call_agent_model: Function to call the agent model.
+- extract_task: Function to extract a task from the agent's state.
+- get_help: Function to provide help information.
+- call_expert_model: Function to call an expert model.
+"""
+
 from functools import lru_cache
-#from langchain_anthropic import ChatAnthropic
 from langchain_openai import ChatOpenAI
 from base_agent.utils.tools import SearchDataBase, agent_tools
-from base_agent.utils.prompts import agent_system_prompt
+from base_agent.utils.prompts import agent_system_prompt_de
 from langgraph.prebuilt import ToolNode
 from langchain_core.messages import AIMessage, ToolMessage
+from langfuse.callback import CallbackHandler
 
+# Initialize the callback handler for logging and monitoring
+# can be disabled by removing the callback handler from the node "call_agent_model"
+langfuse_handler = CallbackHandler(
+    secret_key="",
+    public_key="",
+    host="https://cloud.langfuse.com", # 🇪🇺 EU region
+)
 
+# Cache the model instances to avoid redundant initializations
 @lru_cache(maxsize=4)
 def _get_model(model_name: str):
     if model_name == "base":
@@ -49,11 +76,11 @@ def agent_route(state):
 # Define the function that calls the model
 def call_agent_model(state):
     messages = state["messages"]
-    messages = [{"role": "system", "content": agent_system_prompt}] + messages
+    messages = [{"role": "system", "content": agent_system_prompt_de}] + messages
     #model_name = config.get('configurable', {}).get("model_name", "anthropic")
     model_name = 'agent'
     model = _get_model(model_name)
-    response = model.invoke(messages)
+    response = model.invoke(messages, config={"callbacks": [langfuse_handler]})
     # We return a list, because this will get added to the existing list
     return {"messages": [response]}
 

@@ -1,3 +1,28 @@
+"""
+This Python file is a Chainlit application that integrates with various services and handles chat interactions.
+
+Imports and Setup:
+- Imports necessary modules like asyncio, chainlit, dotenv, and others.
+- Loads environment variables using load_dotenv.
+
+Starter Messages:
+- Defines an asynchronous function `set_starters` that returns a list of starter messages with labels, messages, and icons.
+
+Chat Session Initialization:
+- Defines `on_chat_start` to initialize a chat session with a unique ID and a `conclusion` variable.
+- Starts monitoring the `conclusion` session variable.
+
+Message Handling:
+- Defines `add_message` to send and update messages.
+- Additional functions (not shown in this excerpt) handle sending conclusions, monitoring session variables, and handling changes.
+
+Chat Interaction:
+- Additional functions (not shown in this excerpt) handle incoming messages and process them through a series of steps and events.
+
+Main Execution:
+- Runs the Chainlit application if the script is executed directly.
+"""
+
 import asyncio
 import chainlit as cl
 from dotenv import load_dotenv
@@ -9,6 +34,32 @@ load_dotenv()
 
 
 from base_agent.agent import graph
+
+@cl.set_starters
+async def set_starters():
+    return [
+        cl.Starter(
+            label="Was kann die App?",
+            message="Was kann diese App?",
+            icon="/public/bulb.svg",
+            ),
+
+        cl.Starter(
+            label="Berechne die Schneelast für ein Flachdach",
+            message="Berechne die Schneelast für ein Flachdach",
+            icon="/public/function.svg",
+            ),
+        cl.Starter(
+            label="Übersicht über Dachformen",
+            message="Was gibt es für Dachformen?",
+            icon="/public/pencil.svg",
+            ),
+        cl.Starter(
+            label="Was ist ein Formbeiwert?",
+            message="Was ist ein Formbeiwert?",
+            icon="/public/mg.svg",
+            )
+        ]
 
 @cl.on_chat_start
 def on_chat_start():
@@ -46,6 +97,8 @@ async def handle_session_variable_change(variable_name, new_value):
     if variable_name == "conclusion" and new_value:
         await send_conclusion()
 
+
+# main function handling the interaction between chainlit and NormGraph
 @cl.on_message
 async def run_convo(message: cl.Message):
     msg = cl.Message(content="")
