@@ -35,7 +35,7 @@ normAI/
 
 ```
 
-Installation steps:
+**Installation steps**:
 1. make sure that a neo4j instance has been set up by following the instructions in the [normGraph](https://github.com/isamul/normGraph) respository
 2. clone the **normAI** repository:
 ```shell
