@@ -50,7 +50,7 @@ def _get_model(model_name: str):
     elif model_name == "calculator":
         client = OpenAI()
         assistant = client.beta.assistants.retrieve(
-            assistant_id='asst_7VQGXcbxkAgXMYNLns3e5tTU'
+            assistant_id='asst_7VQGXcbxkAgXMYNLns3e5tTU' # OpenAI Assistant with code interpreter access for calculations
             )
         return client, assistant
 
