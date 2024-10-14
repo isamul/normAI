@@ -1,5 +1,7 @@
 ![NormAI](img/banner.png)
 
+<a href="https://doi.org/10.5281/zenodo.13930606"><img src="https://zenodo.org/badge/858259375.svg" alt="DOI"></a>
+
 # Companion Repository to the Masters Thesis "Natural Language Processing for Standards"
 
 This repository contains the source code of the Web-application with a dedicated UI. The main logic is forked from the [normGraph](https://github.com/isamul/normGraph) repository. Consult the main repository for details about the application logic. **normAI** is a conversational chat-application using generative language models to work with building codes and standards more intuitively. 
